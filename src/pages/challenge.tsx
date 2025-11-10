@@ -10,7 +10,7 @@ function ChallengePage() {
           src="placeholder.png"
         />
 
-        <Container className="-mt-4 h-full w-full grow rounded-t-2xl bg-(--background-surface-secondary) py-4 pb-[env(safe-area-inset-bottom)]">
+        <Container className="-mt-4 h-full w-full grow rounded-t-2xl bg-(--background-surface-secondary) pt-4 pb-8">
           <Typography.Headline>Challenge</Typography.Headline>
 
           <Button className="mt-auto" mode="primary">

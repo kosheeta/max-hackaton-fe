@@ -9,7 +9,7 @@ import { ChallengePage } from '../pages/challenge'
 function App() {
   const maxUIRef = useRef<HTMLDivElement>(null)
 
-  // костыль)
+  // костыль) чтобы не мелькало при попытке elastic скролла вверх на ios
   useLayoutEffect(() => {
     if (maxUIRef.current) {
       const backgroundColor = maxUIRef.current
