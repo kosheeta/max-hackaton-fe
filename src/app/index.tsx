@@ -1,33 +1,14 @@
-import { useRef } from 'react'
+import { MaxUI } from '@maxhub/max-ui'
+import '@maxhub/max-ui/dist/styles.css'
 
 import './styles/index.css'
+import { ChallengePage } from '../pages/challenge'
 
 function App() {
-  const videoRef = useRef<HTMLVideoElement>(null)
-
-  const handleClick = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: true,
-      })
-
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream
-        videoRef.current.onloadedmetadata = () => {
-          videoRef.current?.play()
-        }
-      }
-    } catch (e) {
-      console.error(e)
-    }
-  }
-
   return (
-    <>
-      <video ref={videoRef}></video>
-
-      <button onClick={handleClick}>Открыть камеру</button>
-    </>
+    <MaxUI className="mx-auto h-lvh max-w-120">
+      <ChallengePage />
+    </MaxUI>
   )
 }
 
