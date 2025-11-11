@@ -1,4 +1,4 @@
-import { Button, Container, Flex } from '@maxhub/max-ui'
+import { Button, Container, Flex, Typography } from '@maxhub/max-ui'
 import { AnimatePresence, type DragHandler, motion } from 'motion/react'
 import { useEffect, useRef, useState } from 'react'
 
@@ -6,6 +6,7 @@ import type { ChallengeData } from '../shared/lib/types'
 
 import { useViewport } from '../shared/lib/hooks'
 import { layoutElements, type PositionedElement } from '../shared/lib/layout'
+import { Tooltip } from '../shared/ui'
 
 interface SceneProps {
   data: ChallengeData
@@ -105,6 +106,15 @@ function Scene({ data }: SceneProps) {
         className="relative -mt-4 flex h-full max-h-5/12 w-full shrink-0 grow items-center justify-center rounded-t-2xl bg-(--background-surface-primary) pt-4 pb-8"
         ref={paletteRef}
       >
+        <Tooltip className="top-4 left-1/2 -translate-x-1/2 -translate-y-full">
+          <Typography.Body asChild variant="small">
+            <p>
+              Перетащите элементы доступности на нужные места, чтобы пройти
+              уровень
+            </p>
+          </Typography.Body>
+        </Tooltip>
+
         {data.elements.map((element) => {
           const position = initialElementPositions.find(
             (position) => position.el.dataset.elementId === element.id,
