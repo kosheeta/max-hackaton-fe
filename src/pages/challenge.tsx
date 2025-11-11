@@ -2,20 +2,20 @@ import { Button, Container, Flex, Panel } from '@maxhub/max-ui'
 import { AnimatePresence, type DragHandler, motion } from 'motion/react'
 import { useEffect, useRef, useState } from 'react'
 
+import { useViewport } from '../shared/lib/hooks'
+import { layoutElements } from '../shared/lib/layout'
+
+// temporary
 const data = {
   elements: [
-    { id: 'ramp', initialX: 20, initialY: 76, name: 'Пандус', width: 282.04 },
+    { id: 'ramp', name: 'Пандус', width: 282.04 },
     {
       id: 'tactile-tiles',
-      initialX: 192,
-      initialY: 38,
       name: 'Тактильные плитки',
       width: 367.46,
     },
     {
       id: 'schedule',
-      initialX: 270,
-      initialY: 168,
       name: 'Расписание',
       width: 182.04,
     },
@@ -29,32 +29,20 @@ function ChallengePage() {
   const panelRef = useRef<HTMLDivElement>(null)
   const paletteRef = useRef<HTMLDivElement>(null)
 
-  const [viewport, setViewport] = useState<{ height: number; width: number }>({
-    height: window.innerHeight,
-    width: window.innerWidth,
-  })
-
   const [placedElements, setPlacedElements] = useState<
     { id: string; x: number; y: number }[]
   >([])
 
-  useEffect(() => {
-    function handleResize() {
-      setViewport({
-        height: window.innerHeight,
-        width: window.innerWidth,
-      })
-    }
+  const viewport = useViewport()
+  const sceneScale = viewport.width / data.scene_width
 
-    window.addEventListener('resize', handleResize)
-    return () => {
-      window.removeEventListener('resize', handleResize)
+  useEffect(() => {
+    if (paletteRef.current) {
+      const container = paletteRef.current
+      const elements = [...container.querySelectorAll('img')]
+      layoutElements(container, elements, 800, 16)
     }
   }, [])
-
-  const scale = viewport.width / data.scene_width
-
-  const isAllElementsPlaced = placedElements.length === data.elements.length
 
   const handleDragEnd: DragHandler = (event, info) => {
     const elementId = (event.target as HTMLElement).dataset.elementId
@@ -91,6 +79,8 @@ function ChallengePage() {
     window.WebApp.close()
   }
 
+  const isAllElementsPlaced = placedElements.length === data.elements.length
+
   return (
     <Panel mode="primary" ref={panelRef}>
       <Flex className="relative h-full" direction="column">
@@ -117,9 +107,7 @@ function ChallengePage() {
               onDragEnd={handleDragEnd}
               src={`images/challenges/${data.id}/elements/${element.id}.png`}
               style={{
-                left: element.initialX,
-                top: element.initialY,
-                width: element.width * scale,
+                width: element.width * sceneScale,
               }}
               whileDrag={{
                 cursor: 'grabbing',
