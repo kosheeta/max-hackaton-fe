@@ -115,7 +115,7 @@ function Scene({ data }: SceneProps) {
               alt={element.name}
               className="absolute h-auto cursor-pointer"
               data-element-id={element.id}
-              drag
+              drag={!isPending}
               dragConstraints={sceneRef}
               dragElastic={0.2}
               dragMomentum={false}
