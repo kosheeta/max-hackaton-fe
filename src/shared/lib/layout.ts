@@ -1,4 +1,4 @@
-interface PositionedElement {
+export interface PositionedElement {
   el: HTMLElement
   height: number
   vx: number
@@ -12,9 +12,9 @@ interface PositionedElement {
 export function layoutElements(
   container: HTMLElement,
   elements: HTMLElement[],
-  iterations: number = 500,
-  padding: number = 20, // расстояние от краёв контейнера
-): void {
+  iterations: number,
+  padding: number,
+): PositionedElement[] {
   const rect = container.getBoundingClientRect()
   const containerWidth = rect.width
   const containerHeight = rect.height
@@ -88,11 +88,14 @@ export function layoutElements(
     }
   }
 
-  // Применяем финальные позиции
-  for (const item of items) {
-    const el = item.el
-    el.style.position = 'absolute'
-    el.style.left = `${item.x}px`
-    el.style.top = `${item.y}px`
-  }
+  // // Применяем финальные позиции
+  // for (const item of items) {
+  //   const el = item.el
+  //   el.style.position = 'absolute'
+  //   el.style.left = `${item.x}px`
+  //   el.style.top = `${item.y}px`
+  //   el.style.transform = ''
+  // }
+
+  return items
 }
