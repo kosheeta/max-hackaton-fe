@@ -44,6 +44,7 @@ function Scene({ data }: SceneProps) {
     const elementId = (event.target as HTMLElement).dataset.elementId
     if (elementId) {
       setCurrentDragElement(elementId)
+      window.WebApp.HapticFeedback.impactOccurred('medium')
     }
   }
 
@@ -76,15 +77,19 @@ function Scene({ data }: SceneProps) {
     }
 
     setCurrentDragElement(null)
+    window.WebApp.HapticFeedback.impactOccurred('medium')
   }
 
   const handleFinishClick = () => {
+    window.WebApp.HapticFeedback.impactOccurred('medium')
+
     console.log(placedElements)
 
     setIsPending(true)
 
     // todo: fetch
     setTimeout(() => {
+      window.WebApp.HapticFeedback.notificationOccurred('success')
       window.WebApp.close()
     }, 1000)
   }

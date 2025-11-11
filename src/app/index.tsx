@@ -7,6 +7,7 @@ import { ChallengePage } from '../pages/challenge'
 
 function App() {
   useEffect(() => {
+    window.WebApp.ready()
     window.WebApp.enableClosingConfirmation()
   }, [])
 

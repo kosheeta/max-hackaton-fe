@@ -31,6 +31,8 @@ function ChallengePage() {
         name: 'Транспортная доступность',
         scene_width: 786,
       })
+
+      window.WebApp.HapticFeedback.impactOccurred('light', false)
     }, 2000)
   }, [])
 
