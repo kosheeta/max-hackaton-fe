@@ -90,6 +90,7 @@ function Scene({ data }: SceneProps) {
     // todo: fetch
     setTimeout(() => {
       window.WebApp.HapticFeedback.notificationOccurred('success')
+      window.WebApp.disableClosingConfirmation()
       window.WebApp.close()
     }, 1000)
   }

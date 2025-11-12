@@ -1,5 +1,6 @@
 interface WebApp {
   close: () => void
+  disableClosingConfirmation: () => void
   enableClosingConfirmation: () => void
   HapticFeedback: {
     impactOccurred: (
