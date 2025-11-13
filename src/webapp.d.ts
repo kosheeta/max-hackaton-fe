@@ -13,6 +13,7 @@ interface WebApp {
     ) => void
     selectionChanged: () => void
   }
+  initData: string
   ready: () => void
 }
 

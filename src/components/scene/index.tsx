@@ -2,33 +2,50 @@ import { Button, Container, Flex, Typography } from '@maxhub/max-ui'
 import { AnimatePresence, type DragHandler, motion } from 'motion/react'
 import { useEffect, useRef, useState } from 'react'
 
-import type { ChallengeData } from '../shared/lib/types'
+import type {
+  ChallengeResponse,
+  CompleteChallengeRequest,
+  PlacedElementRequest,
+} from '../../shared/lib/types'
 
-import { useViewport } from '../shared/lib/hooks'
-import { layoutElements, type PositionedElement } from '../shared/lib/layout'
-import { Tooltip } from '../shared/ui'
+import { backendUrl } from '../../shared/config'
+import { layoutElements, type PositionedElement } from '../../shared/lib/layout'
+import { Tooltip } from '../../shared/ui'
+import { getElementImageSource, getSceneImageSource } from './lib'
 
 interface SceneProps {
-  data: ChallengeData
+  data: ChallengeResponse
 }
 
 function Scene({ data }: SceneProps) {
   const sceneRef = useRef<HTMLDivElement>(null)
   const paletteRef = useRef<HTMLDivElement>(null)
 
+  const [sceneScale, setSceneScale] = useState(1)
   const [initialElementPositions, setInitialElementPositions] = useState<
     PositionedElement[]
   >([])
   const [currentDragElement, setCurrentDragElement] = useState<null | string>(
     null,
   )
-  const [placedElements, setPlacedElements] = useState<
-    { id: string; x: number; y: number }[]
-  >([])
+  const [placedElements, setPlacedElements] = useState<PlacedElementRequest[]>(
+    [],
+  )
   const [isPending, setIsPending] = useState(false)
 
-  const viewport = useViewport()
-  const sceneScale = viewport.width / data.scene_width
+  useEffect(() => {
+    function handleResize() {
+      if (paletteRef.current) {
+        setSceneScale(paletteRef.current.offsetWidth / data.scene_width)
+      }
+    }
+    handleResize()
+
+    window.addEventListener('resize', handleResize)
+    return () => {
+      window.removeEventListener('resize', handleResize)
+    }
+  }, [])
 
   useEffect(() => {
     if (paletteRef.current) {
@@ -80,19 +97,26 @@ function Scene({ data }: SceneProps) {
     window.WebApp.HapticFeedback.impactOccurred('light')
   }
 
-  const handleFinishClick = () => {
+  const handleFinishClick = async () => {
     window.WebApp.HapticFeedback.impactOccurred('medium')
-
-    console.log(placedElements)
 
     setIsPending(true)
 
-    // todo: fetch
-    setTimeout(() => {
-      window.WebApp.HapticFeedback.notificationOccurred('success')
-      window.WebApp.disableClosingConfirmation()
-      window.WebApp.close()
-    }, 1000)
+    await fetch(`${backendUrl}/api/challenges/complete`, {
+      body: JSON.stringify({
+        placed_elements: placedElements,
+      } as CompleteChallengeRequest),
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Init-Data': window.WebApp.initData,
+      },
+      method: 'POST',
+    })
+
+    window.WebApp.HapticFeedback.notificationOccurred('success')
+
+    window.WebApp.disableClosingConfirmation()
+    window.WebApp.close()
   }
 
   const isAllElementsPlaced =
@@ -104,7 +128,7 @@ function Scene({ data }: SceneProps) {
         <img
           alt={data.name}
           className="h-full w-full object-cover"
-          src={`images/challenges/${data.id}/scene.png`}
+          src={getSceneImageSource(data.id)}
         />
       </div>
 
@@ -138,7 +162,7 @@ function Scene({ data }: SceneProps) {
               key={element.id}
               onDragEnd={handleDragEnd}
               onDragStart={handleDragStart}
-              src={`images/challenges/${data.id}/elements/${element.id}.png`}
+              src={getElementImageSource(data.id, element.id)}
               style={{
                 left: position?.x,
                 top: position?.y,

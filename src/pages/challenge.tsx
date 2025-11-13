@@ -2,38 +2,43 @@ import { Panel, Spinner } from '@maxhub/max-ui'
 import { AnimatePresence, motion } from 'motion/react'
 import { useEffect, useState } from 'react'
 
-import type { ChallengeData } from '../shared/lib/types'
+import type { ChallengeResponse } from '../shared/lib/types'
 
 import { Scene } from '../components/scene'
+import {
+  getElementImageSource,
+  getSceneImageSource,
+} from '../components/scene/lib'
+import { backendUrl } from '../shared/config'
+import { preloadImages } from '../shared/lib/preload'
 
 function ChallengePage() {
-  const [data, setData] = useState<ChallengeData | null>(null)
+  const [data, setData] = useState<ChallengeResponse | null>(null)
 
   useEffect(() => {
-    // todo: fetch data and preload images
-
-    setTimeout(() => {
-      setData({
-        elements: [
-          { id: 'ramp', name: 'Пандус', width: 282.04 },
-          {
-            id: 'tactile-tiles',
-            name: 'Тактильные плитки',
-            width: 367.46,
-          },
-          {
-            id: 'schedule',
-            name: 'Расписание',
-            width: 182.04,
-          },
-        ],
-        id: 'transport',
-        name: 'Транспортная доступность',
-        scene_width: 786,
+    async function fetchData() {
+      const response = await fetch(`${backendUrl}/api/challenges`, {
+        headers: {
+          'X-Init-Data': window.WebApp.initData,
+        },
       })
+      const json = (await response.json()) as ChallengeResponse
+
+      const images = [
+        getSceneImageSource(json.id),
+        ...json.elements.map((element) =>
+          getElementImageSource(json.id, element.id),
+        ),
+      ]
+
+      await preloadImages(images)
+
+      setData(json)
 
       window.WebApp.HapticFeedback.impactOccurred('light', false)
-    }, 2000)
+    }
+
+    fetchData()
   }, [])
 
   return (
