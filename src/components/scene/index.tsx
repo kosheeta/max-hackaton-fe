@@ -72,19 +72,18 @@ function Scene({ data }: SceneProps) {
       const paletteRect = paletteRef.current.getBoundingClientRect()
 
       if (info.point.y < paletteRect.top) {
+        const [x, y] = [info.point.x, info.point.y].map(
+          (value) => value / sceneScale,
+        )
+
         if (placedElements.some((element) => element.id === elementId)) {
           setPlacedElements((prev) =>
             prev.map((element) =>
-              element.id === elementId
-                ? { ...element, x: info.point.x, y: info.point.y }
-                : element,
+              element.id === elementId ? { ...element, x, y } : element,
             ),
           )
         } else {
-          setPlacedElements((prev) => [
-            ...prev,
-            { id: elementId, x: info.point.x, y: info.point.y },
-          ])
+          setPlacedElements((prev) => [...prev, { id: elementId, x, y }])
         }
       } else {
         setPlacedElements((prev) =>
