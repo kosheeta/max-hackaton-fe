@@ -4,6 +4,5 @@ import { defineConfig } from 'vite'
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: '/max-hackaton-fe/',
   plugins: [react(), tailwindcss()],
 })

@@ -45,7 +45,7 @@ function Scene({ data }: SceneProps) {
     return () => {
       window.removeEventListener('resize', handleResize)
     }
-  }, [])
+  }, [data.scene_width])
 
   useEffect(() => {
     if (paletteRef.current) {

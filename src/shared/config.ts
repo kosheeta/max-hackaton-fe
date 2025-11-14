@@ -1,1 +1,1 @@
-export const backendUrl = 'https://max-hackaton-be.peaceinwealth.ru'
+export const backendUrl = import.meta.env.VITE_BACKEND_URL

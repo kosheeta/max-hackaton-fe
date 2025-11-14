@@ -1,73 +1,54 @@
-# React + TypeScript + Vite
+# «Инклюзивный конструктор» — Front End
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+### Зависимости
+В проекте используется пакетный менеджер [pnpm](https://pnpm.io/installation) и соответствующий lock-файл.
+Необходимые зависимости прописаны в файле `package.json`, а их версии зафиксированы в `pnpm-lock.yaml`.
 
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Конфигурация
+В файле .env хранится конфигурация проекта. Все переданные переменные `VITE_*` являются публичными и попадают в итоговый бандл.
+```environment
+# Базовый адрес API бэкенда
+VITE_BACKEND_URL=https://max-hackaton-be.peaceinwealth.ru
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Локальный запуск
+1. Установка зависимостей
+```shell
+pnpm i
 ```
+
+2. Запуск в режиме разработки
+```shell
+pnpm dev
+```
+
+### Сборка для продакшена
+1. Установка зависимостей
+```shell
+pnpm i
+```
+
+2. Сборка
+```shell
+pnpm build
+```
+На выходе получаем папку `dist` с необходимой статикой.
+
+### Сборка и запуск через Docker (образ с Nginx)
+В файле `.nginx/nginx.conf` содержится конфигурация Nginx.
+
+1. Сборка
+```shell
+docker build -t max-hackaton-fe .
+```
+
+2. Запуск
+```shell
+docker run -p 80:80 -d max-hackaton-fe
+```
+Приложение доступно на порту 80.
+
+### CI/CD
+В данном репозитории настроен [GitHub Workflow](.github/workflows/deploy.yaml) для сборки проекта и деплоя с использованием GitHub Pages.
+
+[Ссылка на деплой](https://kosheeta.github.io/max-hackaton-fe/) (примечание: приложение не будет работать корректно вне мессенджера MAX)
