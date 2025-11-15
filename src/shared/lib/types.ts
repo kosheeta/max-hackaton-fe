@@ -8,6 +8,7 @@ export interface ChallengeResponse {
   elements: ChallengeElementResponse[]
   id: string
   name: string
+  scene_height: number
   scene_width: number
 }
 

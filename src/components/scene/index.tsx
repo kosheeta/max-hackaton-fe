@@ -19,6 +19,7 @@ interface SceneProps {
 
 function Scene({ data }: SceneProps) {
   const sceneRef = useRef<HTMLDivElement>(null)
+  const sceneImageRef = useRef<HTMLImageElement>(null)
   const paletteRef = useRef<HTMLDivElement>(null)
 
   const [sceneScale, setSceneScale] = useState(1)
@@ -41,10 +42,13 @@ function Scene({ data }: SceneProps) {
     }
     handleResize()
 
-    window.addEventListener('resize', handleResize)
-    return () => {
-      window.removeEventListener('resize', handleResize)
-    }
+    // elastic scroll приложения вызывает событие resize, что триггерит пересчет позиций элементов
+    // => временно отключено
+
+    // window.addEventListener('resize', handleResize)
+    // return () => {
+    //   window.removeEventListener('resize', handleResize)
+    // }
   }, [data.scene_width])
 
   useEffect(() => {
@@ -65,16 +69,22 @@ function Scene({ data }: SceneProps) {
     }
   }
 
-  const handleDragEnd: DragHandler = (event, info) => {
-    const elementId = (event.target as HTMLElement).dataset.elementId
+  const handleDragEnd: DragHandler = (event) => {
+    const element = event.target as HTMLElement
+    const elementId = element?.dataset.elementId
 
-    if (paletteRef.current && elementId) {
+    if (paletteRef.current && sceneImageRef.current && element && elementId) {
+      const elementRect = element.getBoundingClientRect()
       const paletteRect = paletteRef.current.getBoundingClientRect()
+      const sceneImageRect = sceneImageRef.current.getBoundingClientRect()
 
-      if (info.point.y < paletteRect.top) {
-        const [x, y] = [info.point.x, info.point.y].map(
-          (value) => value / sceneScale,
-        )
+      if (elementRect.top < paletteRect.top) {
+        // object cover
+        const x = elementRect.left / sceneScale
+        const y =
+          (elementRect.top +
+            (data.scene_height * sceneScale - sceneImageRect.height) / 2) /
+          sceneScale
 
         if (placedElements.some((element) => element.id === elementId)) {
           setPlacedElements((prev) =>
@@ -127,6 +137,7 @@ function Scene({ data }: SceneProps) {
         <img
           alt={data.name}
           className="h-full w-full object-cover"
+          ref={sceneImageRef}
           src={getSceneImageSource(data.id)}
         />
       </div>

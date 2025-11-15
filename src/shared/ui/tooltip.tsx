@@ -35,7 +35,7 @@ function Tooltip({ children, className, ...props }: TooltipProps) {
   return (
     <div
       className={clsx(
-        'absolute z-10 rounded-2xl bg-(--accent-themed) p-2 text-center transition-opacity select-none',
+        'pointer-events-none absolute z-10 rounded-2xl bg-(--accent-themed) p-2 text-center transition-opacity select-none',
         !shown && 'opacity-0',
         className,
       )}
